@@ -65,6 +65,15 @@ public final class SecurityUtil {
     }
   }
 
+  public static void checkAdminRoleOrPermissions2(
+          Authorizer authorizer, SecurityContext securityContext, EntityReference entityReference) {
+    Principal principal = securityContext.getUserPrincipal();
+    AuthenticationContext authenticationCtx = SecurityUtil.getAuthenticationContext(principal);
+    if (!authorizer.hasPermissions2(authenticationCtx, entityReference)) {
+      throw new AuthorizationException("Principal: " + principal + " does not have permissions");
+    }
+  }
+
   /** This helper function checks if user has permission to perform the given metadata operation. */
   public static void checkAdminRoleOrPermissions(
       Authorizer authorizer,

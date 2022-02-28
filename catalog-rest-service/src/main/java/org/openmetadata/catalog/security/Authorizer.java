@@ -25,10 +25,14 @@ public interface Authorizer {
   void init(AuthorizerConfiguration config, Jdbi jdbi) throws IOException;
 
   /**
-   * Check if the authenticated user has given permission on the target entity identified by the given resourceType and
-   * resourceName
+   * Check if the authenticated user has given permission on the target entity identified by the given entity's owner
    */
-  boolean hasPermissions(AuthenticationContext ctx, EntityReference entityReference);
+  boolean hasPermissions(AuthenticationContext ctx, EntityReference ownerReference);
+
+  /**
+   * Check if the authenticated user has given permission on the target entity identified by the given entity
+   */
+  boolean hasPermissions2(AuthenticationContext ctx, EntityReference entityReference);
 
   /**
    * Check if the authenticated user (subject) has permission to perform the {@link MetadataOperation} on the target

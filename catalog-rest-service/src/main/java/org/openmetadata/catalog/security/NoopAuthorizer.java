@@ -46,8 +46,13 @@ public class NoopAuthorizer implements Authorizer {
   }
 
   @Override
-  public boolean hasPermissions(AuthenticationContext ctx, EntityReference entityOwnership) {
+  public boolean hasPermissions(AuthenticationContext ctx, EntityReference ownerReference) {
     return true;
+  }
+
+  @Override
+  public boolean hasPermissions2(AuthenticationContext ctx, EntityReference entityReference) {
+    return false;
   }
 
   @Override

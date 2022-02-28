@@ -116,9 +116,35 @@ public class DefaultAuthorizer implements Authorizer {
   }
 
   @Override
-  public boolean hasPermissions(AuthenticationContext ctx, EntityReference owner) {
+  public boolean hasPermissions(AuthenticationContext ctx, EntityReference ownerReference) {
     validateAuthenticationContext(ctx);
     // To encourage users to claim or update changes to tables when a non-owner or un-claimed datasets.
+    if (ownerReference == null) {
+      return true;
+    }
+    try {
+      User user = getUserFromAuthenticationContext(ctx);
+      return isOwnedByUser(user, ownerReference);
+    } catch (IOException | EntityNotFoundException | ParseException ex) {
+      return false;
+    }
+  }
+
+  public boolean hasPermissions2(AuthenticationContext ctx, EntityReference entityReference) {
+    validateAuthenticationContext(ctx);
+
+    if (isAdmin(ctx) || isBot(ctx)) {
+      // Admins and bots have permissions to do all operations.
+      return true;
+    }
+
+    EntityReference owner;
+    try {
+      Object entity = Entity.getEntity(entityReference, new EntityUtil.Fields(List.of("owner")));
+      owner = Entity.getEntityRepository(entityReference.getType()).getOriginalOwner(entity);
+    } catch (IOException |ParseException e) {
+      return false;
+    }
     if (owner == null) {
       return true;
     }
